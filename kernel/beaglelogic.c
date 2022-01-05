@@ -145,7 +145,7 @@ struct beaglelogicdev {
 	uint32_t bufunitsize;  	/* Size of 1 Allocation unit */
 	uint32_t samplerate; 	/* Sample rate = 100 / n MHz, n = 1+ (int) */
 	uint32_t triggerflags;	/* 0:one-shot, 1:continuous */
-	uint32_t sampleunit; 	/* 0:16bits, 1:8bits */
+	uint32_t sampleunit; 	/* 0:16bits, 1:8bits, 3:24bit PCM array sample mode */
 
 	/* State */
 	uint32_t state;

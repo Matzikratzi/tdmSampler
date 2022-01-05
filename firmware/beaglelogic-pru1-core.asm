@@ -64,6 +64,7 @@ asm_main:
 	QBNE   samplexm, R14, 1
 sample100m:
 	QBEQ   sample100m8, R15, 1
+	QBEQ   tdmArraySamplingInit, R15, 3
 sample100m16:
 	MOV    R21.w0, R31.w0
 	NOP
@@ -174,6 +175,85 @@ $sample100m8$2:
 	MOV    R21.b1, R31.b0
 	JMP    $sample100m8$2
 
+tdmArraySamplingInit:
+	;; todo: start sequence with 262144 (r21) SCK at 25 MHz
+	;; yeah, each 8 clock cycle
+	LDI R21, 262144
+	LDI R22, 0
+	LDI R23, 0
+	LDI R24, 0
+	LDI R30, 0x00		; Set both SCK to 0
+	NOP
+	NOP
+	NOP
+$tdmArraySamplingInit$2:
+	LDI R30.b0, 0x03		;Set both SCK to 1
+	NOP
+	NOP
+	NOP
+
+	LDI R30.b0, 0x00		;Set both SCK to 0
+	SUB R21, R21, 1
+	NOP
+	QBNE $tdmArraySamplingInit$2, R21, 0
+	
+tdmArraySamplingCycleStart:
+	;; todo: continuous seconds pulse for inter array sync
+	;; r22: counting 200 MHz to get to 1 s
+	;; todo: make sure SCK is set according to next state
+	;; Must probably make fixes all the way backwards
+tdmArraySamplingMic1:
+	;; todo: WS (for mic 1, 17, 33 and 49)
+	LDI R30.w0,  0x0103	; SCK and WS (WS for first mics on loops)
+	MOV R21.b3,  R31.b0	; Sample all four first mics simultaneously
+	MOV R21.t23, R21.t0	; mic 1
+	MOV R22.t23, R21.t1	; mic 17
+
+	LDI R30.w0,  0x0000	; !WS and !SCK
+	MOV R23.t23, R21.t2	; mic 33
+	MOV R24.t23, R21.t3	; mic 49
+	NOP
+
+	
+	LDI R30.b0,  0x03	; SCK
+	MOV R21.b3,  R31.b0	; Sample all four first mics simultaneously
+	MOV R21.t22, R21.t0	; mic 1
+	MOV R22.t22, R21.t1	; mic 17
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV R23.t22, R21.t2	; mic 33
+	MOV R24.t22, R21.t3	; mic 49
+	NOP
+
+	
+	;; todo: bits 20 all the way to bits 1
+	;; Do not forget!!!!!!!!!!!!!!!!!!!
+
+	LDI R30.b0, 0x03	; SCK
+	MOV R21.b3, R31.b0	; Sample all four first mics simultaneously
+	MOV R21.t0, R21.t0	; mic 1
+	MOV R22.t0, R21.t1	; mic 17
+
+	LDI R30.b0, 0x00	; !SCK
+	MOV R23.t0, R21.t2	; mic 33
+	MOV R24.t0, R21.t3	; mic 49
+	XOUT 10, &R21, 16
+
+	
+	;; todo: continuous 25 MHz SCK
+	;; yeah, each 8 clock cycle
+	
+	;; r21: then PCM sample for mics 1 to 16
+	;; r22: PCM sample for mics 17 to 32
+
+tdmArraySamplingMic2to16:
+	;; todo: continuous 25 MHz SCK
+	;; yeah, each 8 clock cycle
+	
+	;; r21: then PCM sample for mics 1 to 16
+	;; r22: PCM sample for mics 17 to 32
+	
+	
 samplexm:
 	QBEQ   samplexm8, R15, 1
 samplexm16:
