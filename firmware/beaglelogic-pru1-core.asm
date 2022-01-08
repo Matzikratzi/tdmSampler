@@ -176,17 +176,30 @@ $sample100m8$2:
 	JMP    $sample100m8$2
 
 tdmArraySamplingInit:
+	;; R21 to R28 used for eight samples. But only the first 24 bits (32)
+	;; R21 first used for 262144 initiating SCKs
+	;; R18 counts 0, 1 (reset) to keep track of 4 or 8 recorded samples
+	;; R19 sample timing. Increments every new WS
+	
+	;; R20.b0 used for simultaneous sampling of 4 TDM bits
+	;; R20.b1 used for WS and SCK for first bit per sample
+	;; R20.b2 used for WS counting down interation var
+	;; R20.b3 used for counting down blanks interation var
+	
 	;; todo: start sequence with 262144 (r21) SCK at 25 MHz
 	;; yeah, each 8 clock cycle
 	LDI R21, 262144
 	LDI R22, 0
 	LDI R23, 0
 	LDI R24, 0
-	LDI R30, 0x00		; Set both SCK to 0
-	NOP
-	NOP
-	NOP
-$tdmArraySamplingInit$2:
+	LDI R29, 0		;zero recorded bytes
+	LDI R30.w0, 0x00	; Set both SCK as well as both WS to 0
+	LDI R18, 0
+	LDI R19, 0
+	LDI R20.b2, 15		;WS only once every 16th iteration
+	LDI R20.b1, 0x33	;WS first round
+
+tdmArraySamplingInitLoop:
 	LDI R30.b0, 0x03		;Set both SCK to 1
 	NOP
 	NOP
@@ -195,34 +208,29 @@ $tdmArraySamplingInit$2:
 	LDI R30.b0, 0x00		;Set both SCK to 0
 	SUB R21, R21, 1
 	NOP
-	QBNE $tdmArraySamplingInit$2, R21, 0
+	QBNE tdmArraySamplingInitLoop, R21, 0
 	
 tdmArraySamplingCycleStart:
-	;; todo: continuous seconds pulse for inter array sync
-	;; r22: counting 200 MHz to get to 1 s
-	;; todo: make sure SCK is set according to next state
-	;; Must probably make fixes all the way backwards
-tdmArraySamplingMic1:
-	;; todo: WS (for mic 1, 17, 33 and 49)
-	LDI R30.w0,  0x0103	; SCK and WS (WS for first mics on loops)
-	MOV R21.b3,  R31.b0	; Sample all four first mics simultaneously
-	MOV R21.t23, R21.t0	; mic 1
-	MOV R22.t23, R21.t1	; mic 17
+	;; bit 23 (MSB)
+	LDI R30.b0,  R20.b1	; SCK and WS (WS for first mics on loops)
+	MOV  R20.b0,  R31.b0	; Sample all four mics simultaneously
+	MOV   R21.t23, R21.t24	; mic from loop 1
+	MOV   R22.t23, R21.t25	; mic from loop 2
 
-	LDI R30.w0,  0x0000	; !WS and !SCK
-	MOV R23.t23, R21.t2	; mic 33
-	MOV R24.t23, R21.t3	; mic 49
+	LDI R30.b0,  0x0000	; !WS and !SCK
+	MOV   R23.t23, R21.t26	; mic from loop 3
+	MOV   R24.t23, R21.t27	; mic from loop 4
 	NOP
 
 	
 	LDI R30.b0,  0x03	; SCK
-	MOV R21.b3,  R31.b0	; Sample all four first mics simultaneously
-	MOV R21.t22, R21.t0	; mic 1
-	MOV R22.t22, R21.t1	; mic 17
+	MOV  R20.b0,  R31.b0	; Sample all four first mics simultaneously
+	MOV   R21.t22, R21.t24	; 
+	MOV   R22.t22, R21.t25	; 
 
 	LDI R30.b0,  0x00	; !SCK
-	MOV R23.t22, R21.t2	; mic 33
-	MOV R24.t22, R21.t3	; mic 49
+	MOV   R23.t22, R21.t26	; 
+	MOV   R24.t22, R21.t27	; 
 	NOP
 
 	
@@ -230,29 +238,64 @@ tdmArraySamplingMic1:
 	;; Do not forget!!!!!!!!!!!!!!!!!!!
 
 	LDI R30.b0, 0x03	; SCK
-	MOV R21.b3, R31.b0	; Sample all four first mics simultaneously
-	MOV R21.t0, R21.t0	; mic 1
-	MOV R22.t0, R21.t1	; mic 17
+	MOV  R20.b0, R31.b0	; Sample all four first mics simultaneously
+	MOV   R21.t0, R21.t24	;
+	MOV   R22.t0, R21.t25	;
 
 	LDI R30.b0, 0x00	; !SCK
-	MOV R23.t0, R21.t2	; mic 33
-	MOV R24.t0, R21.t3	; mic 49
-	XOUT 10, &R21, 16
+	MOV   R23.t0, R21.t26	;
+	MOV   R24.t0, R21.t27	;
+	;XOUT 10, &R21, 16	; Move data accross to the other PRU
+	ADD R18, R18, 1
+	
+	;; todo: create SCKs for the next 8 empty bits
+tdmArraySamplingBlanks:
+	LDI R30.b0, 0x03	;Set both SCK to 1
+	LDI   R20.b3, 7		;Set iteration variable for blanks 
+	SUB   R20.b2, R20.b2, 1	;WS only every 16th
+	;LDI R31, PRU1_PRU0_INTERRUPT + 16    ; Jab PRU0
+	NOP 			; JAB PRU0 after XOUT
 
-	
-	;; todo: continuous 25 MHz SCK
-	;; yeah, each 8 clock cycle
-	
-	;; r21: then PCM sample for mics 1 to 16
-	;; r22: PCM sample for mics 17 to 32
+	LDI R30.b0, 0x00	;Set both SCK to 0
+	QBEQ  upcommingWS, R20.b2, 0
+	LDI   R20.b1, 0x03	;WS is set not set for next sample
+	QBA   $tdmArraySamplingBlanks$2	;keep timing
 
-tdmArraySamplingMic2to16:
-	;; todo: continuous 25 MHz SCK
-	;; yeah, each 8 clock cycle
+upcommingWS:
+	LDI   R20.b1, 0x33	;WS is set for next sample
+	LDI   R20.b2, 16	;Set iteration variable for WS only every 16th
+
+	;; todo: use regs r25-r28 instead. xout first time, xin to
+	;; 	r21-r24 before xout of all. Send sampTime in MSBs of R21-r24.
 	
-	;; r21: then PCM sample for mics 1 to 16
-	;; r22: PCM sample for mics 17 to 32
+tdmArraySamplingBlanks2:
+	LDI R30.b0, 0x03	;Set both SCK to 1
+	ADD   R29, R29, 16	;increment recorded bytes
+	NOP
+	NOP
+
+	LDI R30.b0, 0x00	;Set both SCK to 0
+	SUB   R20.b3, R20.b3, 1
+	QBNE  tdmArraySamplingBlanks3, R20.b3, 0 ;keep timing, once more blanks
+	QBA   tdmArraySamplingCycleStart
+
+tdmArraySamplingBlanks3:
+	QBA   tdmArraySamplingBlanks2	;keep timing, once more blanks
 	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
 	
 samplexm:
 	QBEQ   samplexm8, R15, 1
