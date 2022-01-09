@@ -212,46 +212,283 @@ tdmArraySamplingInitLoop:
 	;; Done! Now valid samples after first WS
 	
 tdmArraySamplingCycleStart:
-	;; bit 23 (MSB)
+	;; SCK for bit 23 (MSB)
 	MOV R30.b0,  R20.b1	; SCK and WS (WS for first mics on loops)
+	NOP
+	NOP
+	NOP
+	
+	LDI R30.b0,  0x00	; !WS and !SCK
 	MOV  R20.b0,  R31.b0	; Sample all four mics simultaneously
 	MOV   R25.t23, R20.t0	; mic from loop 1
 	MOV   R26.t23, R20.t1	; mic from loop 2
 
-	LDI R30.b0,  0x00	; !WS and !SCK
+	;; SCK for bit 22
+	LDI R30.b0,  0x03	; SCK
 	MOV   R27.t23, R20.t2	; mic from loop 3
 	MOV   R28.t23, R20.t3	; mic from loop 4
 	NOP
 
-	
-	LDI R30.b0,  0x03	; SCK
-	MOV  R20.b0,  R31.b0	; Sample all four first mics simultaneously
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
 	MOV   R25.t22, R20.t0	; 
 	MOV   R26.t22, R20.t1	; 
 
-	LDI R30.b0,  0x00	; !SCK
+	;; SCK for bit 21
+	LDI R30.b0, 0x03	; SCK
 	MOV   R27.t22, R20.t2	; 
 	MOV   R28.t22, R20.t3	; 
 	NOP
 
-	
-	;; todo: bits 20 all the way to bits 1
-	;; Do not forget!!!!!!!!!!!!!!!!!!!
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t21, R20.t0	; 
+	MOV   R26.t21, R20.t1	; 
 
-
-
+	;; SCK for bit 20
 	LDI R30.b0, 0x03	; SCK
-	MOV  R20.b0, R31.b0	; Sample all four first mics simultaneously
-	MOV   R25.t0, R20.t0	;
-	MOV   R26.t0, R20.t1	;
+	MOV   R27.t21, R20.t2	; 
+	MOV   R28.t21, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t20, R20.t0	; 
+	MOV   R26.t20, R20.t1	; 
+
+	;; SCK for bit 19
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t20, R20.t2	; 
+	MOV   R28.t20, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t19, R20.t0	; 
+	MOV   R26.t19, R20.t1	; 
+
+	;; SCK for bit 18
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t19, R20.t2	; 
+	MOV   R28.t19, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t18, R20.t0	; 
+	MOV   R26.t18, R20.t1	; 
+
+	;; SCK for bit 17
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t18, R20.t2	; 
+	MOV   R28.t18, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t17, R20.t0	; 
+	MOV   R26.t17, R20.t1	; 
+
+	;; SCK for bit 16
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t17, R20.t2	; 
+	MOV   R28.t17, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t16, R20.t0	; 
+	MOV   R26.t16, R20.t1	; 
+
+	;; SCK for bit 15
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t16, R20.t2	; 
+	MOV   R28.t16, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t15, R20.t0	; 
+	MOV   R26.t15, R20.t1	; 
+
+	;; SCK for bit 14
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t15, R20.t2	; 
+	MOV   R28.t15, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t14, R20.t0	; 
+	MOV   R26.t14, R20.t1	; 
+
+	;; SCK for bit 13
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t14, R20.t2	; 
+	MOV   R28.t14, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t13, R20.t0	; 
+	MOV   R26.t13, R20.t1	; 
+
+	;; SCK for bit 12
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t13, R20.t2	; 
+	MOV   R28.t13, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t12, R20.t0	; 
+	MOV   R26.t12, R20.t1	; 
+
+	;; SCK for bit 11
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t12, R20.t2	; 
+	MOV   R28.t12, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t11, R20.t0	; 
+	MOV   R26.t11, R20.t1	; 
+
+	;; SCK for bit 10
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t11, R20.t2	; 
+	MOV   R28.t11, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t10, R20.t0	; 
+	MOV   R26.t10, R20.t1	; 
+
+	;; SCK for bit 9
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t10, R20.t2	; 
+	MOV   R28.t10, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t9, R20.t0	; 
+	MOV   R26.t9, R20.t1	; 
+
+	;; SCK for bit 8
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t9, R20.t2	; 
+	MOV   R28.t9, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t8, R20.t0	; 
+	MOV   R26.t8, R20.t1	; 
+
+	;; SCK for bit 7
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t8, R20.t2	; 
+	MOV   R28.t8, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t7, R20.t0	; 
+	MOV   R26.t7, R20.t1	; 
+
+	;; SCK for bit 6
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t7, R20.t2	; 
+	MOV   R28.t7, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t6, R20.t0	; 
+	MOV   R26.t6, R20.t1	; 
+
+	;; SCK for bit 5
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t6, R20.t2	; 
+	MOV   R28.t6, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t5, R20.t0	; 
+	MOV   R26.t5, R20.t1	; 
+
+	;; SCK for bit 4
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t5, R20.t2	; 
+	MOV   R28.t5, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t4, R20.t0	; 
+	MOV   R26.t4, R20.t1	; 
+
+	;; SCK for bit 3
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t4, R20.t2	; 
+	MOV   R28.t4, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t3, R20.t0	; 
+	MOV   R26.t3, R20.t1	; 
+
+	;; SCK for bit 2
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t3, R20.t2	; 
+	MOV   R28.t3, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t2, R20.t0	; 
+	MOV   R26.t2, R20.t1	; 
+
+	;; SCK for bit 1
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t2, R20.t2	; 
+	MOV   R28.t2, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t1, R20.t0	; 
+	MOV   R26.t1, R20.t1	; 
+
+	;; SCK for bit 0
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t1, R20.t2	; 
+	MOV   R28.t1, R20.t3	; 
+	NOP
+
+	LDI R30.b0,  0x00	; !SCK
+	MOV  R20.b0,  R31.b0	;
+	MOV   R25.t0, R20.t0	; 
+	MOV   R26.t0, R20.t1	; 
+
+	;; SCK for empty bit 0 [0-7]
+	LDI R30.b0, 0x03	; SCK
+	MOV   R27.t0, R20.t2	; 
+	MOV   R28.t0, R20.t3	; 
+	NOP
 
 	LDI R30.b0, 0x00	; !SCK
-	MOV   R27.t0, R20.t2	;
-	MOV   R28.t0, R20.t3	; Now all bits are taken for the four 24 bits samples
+	NOP
+	NOP
 	QBEQ moveFirstFour, R18, 0 ; Move samples to lower regs
 
 sendEightSamples:	
-	;; While giving SCK to empty bit 0
+	;; While giving SCK to empty bit 1
 	;; Giving data to other PRU
 	LDI R30.b0, 0x03	; SCK
 	ADD R29, R29, 32	;byte counter
@@ -264,7 +501,7 @@ sendEightSamples:
 	QBA tdmArraySamplingBlanks
 	
 moveFirstFour:
-	;; While giving SCK to empty bit 0
+	;; While giving SCK to empty bit 1
 	;; We will send 8 samples (registers) at a time
 	LDI R30.b0, 0x03	; SCK
 	MOV R21, R25
@@ -280,7 +517,7 @@ moveFirstFour:
 tdmArraySamplingBlanks:
 	;; giving SCK to empty bit 1 (and 2)
 	LDI R30.b0, 0x03	;Set both SCK to 1
-	LDI   R20.b3, 5		;Set iteration variable for blanks 
+	LDI   R20.b3, 4		;Set iteration variable for blanks 
 	SUB   R20.b2, R20.b2, 1	;WS only every 16th
 	NOP
 
