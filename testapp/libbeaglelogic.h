@@ -54,7 +54,8 @@ enum beaglelogic_triggerflags {
 /* Possible sample unit / formats */
 enum beaglelogic_sampleunit {
 	BL_SAMPLEUNIT_16_BITS = 0,
-	BL_SAMPLEUNIT_8_BITS
+	BL_SAMPLEUNIT_8_BITS,
+	BL_SAMPLEUNIT_24_BITS
 };
 
 /* Open and close functions */

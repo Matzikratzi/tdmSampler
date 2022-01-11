@@ -77,7 +77,7 @@ struct capture_context {
 	uint32_t resp;          // Response code
 
 	uint32_t samplediv;     // Sample rate = (100 / samplediv) MHz
-	uint32_t sampleunit;    // 0 = 16-bit, 1 = 8-bit
+	uint32_t sampleunit;    // 0 = 16-bit, 1 = 8-bit, 2 = 24 bit tdm samps
 	uint32_t triggerflags;  // 0 = one-shot, 1 = continuous sampling
 
 	struct buflist list_head;
@@ -145,7 +145,7 @@ struct beaglelogicdev {
 	uint32_t bufunitsize;  	/* Size of 1 Allocation unit */
 	uint32_t samplerate; 	/* Sample rate = 100 / n MHz, n = 1+ (int) */
 	uint32_t triggerflags;	/* 0:one-shot, 1:continuous */
-	uint32_t sampleunit; 	/* 0:16bits, 1:8bits, 3:24bit PCM array sample mode */
+	uint32_t sampleunit; 	/* 0:16bits, 1:8bits, 2:24bit PCM array sample mode */
 
 	/* State */
 	uint32_t state;
@@ -386,7 +386,8 @@ uint32_t beaglelogic_get_sampleunit(struct device *dev)
 int beaglelogic_set_sampleunit(struct device *dev, uint32_t sampleunit)
 {
 	struct beaglelogicdev *bldev = dev_get_drvdata(dev);
-	if (sampleunit > 2)
+	if (sampleunit > 2)	/* Funny, a bug before introducing
+				   tdm's 2 (for 24 bits) */
 		return -EINVAL;
 
 	if (mutex_trylock(&bldev->mutex)) {
@@ -983,6 +984,10 @@ static ssize_t bl_sampleunit_show(struct device *dev,
 
 	switch (ret)
 	{
+		case BL_SAMPLEUNIT_24_BITS:
+			cnt += scnprintf(buf, PAGE_SIZE, "24bit\n");
+			break;
+
 		case BL_SAMPLEUNIT_16_BITS:
 			cnt += scnprintf(buf, PAGE_SIZE, "16bit\n");
 			break;

@@ -30,7 +30,8 @@ enum beaglelogic_triggerflags {
 
 enum beaglelogic_sampleunit {
 	BL_SAMPLEUNIT_16_BITS = 0,
-	BL_SAMPLEUNIT_8_BITS
+	BL_SAMPLEUNIT_8_BITS,
+	BL_SAMPLEUNIT_24_BITS
 };
 
 /* ioctl calls that can be issued on /dev/beaglelogic */
