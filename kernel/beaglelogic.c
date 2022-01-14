@@ -22,7 +22,6 @@
 
 #include <linux/platform_device.h>
 #include <linux/pruss.h>
-#include <linux/pruss_intc.h>
 #include <linux/remoteproc.h>
 #include <linux/miscdevice.h>
 
@@ -1228,7 +1227,7 @@ static int beaglelogic_probe(struct platform_device *pdev)
 	if (IS_ERR(bldev->pru1)) {
 		ret = PTR_ERR(bldev->pru1);
 		if (ret != -EPROBE_DEFER)
-			dev_err(dev, "Unable to get PRU0.\n");
+			dev_err(dev, "Unable to get PRU1.\n");
 		goto fail_pruss_put;
 	}
 
